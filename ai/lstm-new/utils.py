@@ -5,7 +5,7 @@ sys.path.append("../../utils")
 import fetchonbinance
 import torch
 
-import inputs
+import params
 
 def load_data(cryptos):
     fetchonbinance.download_and_join_binance_file(cryptos)
@@ -40,28 +40,30 @@ def load_data(cryptos):
 
 def prepare_data(df):
     # Features de base
-    feat_cols = ["open","high","low","close","volume"]
+    #feat_cols = ["open","high","low","close","volume"]
+    feat_cols = ["close"]
 
     # (Optionnel) Ajouter indicateurs simples
-    df["hl_spread"] = df["high"] - df["low"]
-    df["oc_spread"] = (df["close"] - df["open"]).abs()
-    feat_cols += ["hl_spread","oc_spread"]
+    # df["hl_spread"] = df["high"] - df["low"]
+    # df["oc_spread"] = (df["close"] - df["open"]).abs()
+    # feat_cols += ["hl_spread","oc_spread"]
 
     # Cible : prix ou log-returns
-    if inputs.USE_RETURNS:
+    if params.USE_RETURNS:
         # log-return: log(C_t / C_{t-1})
-        df["target"] = np.log(df[inputs.TARGET_COL]).diff()
+        df["target"] = np.log(df[params.TARGET_COL]).diff()
     else:
-        df["target"] = df[inputs.TARGET_COL].shift(-inputs.HORIZON)  # prédire le prix futur
+        #price delta
+        df["target"] = df[params.TARGET_COL].shift(-params.HORIZON) - df[params.TARGET_COL]
     df = df.dropna().reset_index(drop=True)
 
     return (df, feat_cols)
 
 def make_windows(X, y, window, horizon):
     Xs, ys = [], []
-    for t in range(window - 1, len(X) - horizon + 1):
+    for t in range(window - 1, len(X) - horizon):
         Xs.append(X[t - window + 1 : t + 1])
-        ys.append(y[t + horizon - 1])
+        ys.append(y[t])
     return np.array(Xs, dtype="float32"), np.array(ys, dtype="float32")
 
 def test_gpu():

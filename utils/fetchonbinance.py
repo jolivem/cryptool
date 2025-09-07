@@ -2,9 +2,10 @@ import requests
 import pandas as pd
 import os
 import zipfile
+import shutil
 
-datas_folder = "D:/DEVS/cryptool/datas/"
-result_folder = "D:/DEVS/cryptool/results/"
+datas_folder = "/mnt/d/DEVS/datas/"
+result_folder = "/mnt/d/DEVS/results/"
 
 
 def download_binance_file(filename):
@@ -56,12 +57,13 @@ def download_and_join_binance_file(allmonths):
         download_binance_crypto(crypto, interval, year_month)
 
     # then join 
-    with open(output_file, "w", encoding="utf-8") as outfile:
-        for fname in months:
-            print(f"Append {fname}...")
-            with open(datas_folder + fname + ".csv", "r", encoding="utf-8") as infile:
-                outfile.write(infile.read())
-                outfile.write("\n")  # optional: add newline between files
+    if len(months) > 1:
+        with open(output_file, "w", encoding="utf-8") as outfile:
+            for fname in months:
+                print(f"Append {fname}...")
+                with open(datas_folder + fname + ".csv", "r", encoding="utf-8") as infile:
+                    outfile.write(infile.read())
+                    outfile.write("\n")  # optional: add newline between files
 
     print(f"Files merged into {output_file}")    
 
@@ -128,6 +130,41 @@ def unzip_csv(zip_path, extract_to_dir):
     print("❌ No CSV file found in the ZIP.")
     return None
 
+# def unzip_first_nonempty_csv(zip_path, extract_to_dir):
+#     os.makedirs(extract_to_dir, exist_ok=True)
+#     with zipfile.ZipFile(zip_path, "r") as zf:
+#         # List CSV candidates with info
+#         csv_infos = [i for i in zf.infolist() 
+#                      if i.filename.lower().endswith(".csv") and not i.is_dir()]
+
+#         if not csv_infos:
+#             print("❌ No CSV files found in the ZIP.")
+#             return None
+
+#         # Show what we found
+#         for info in csv_infos:
+#             print(f"Found: {info.filename} | size={info.file_size} bytes | "
+#                   f"compressed={info.compress_size} bytes")
+
+#         # Pick the first NON-empty CSV
+#         target = next((i for i in csv_infos if i.file_size > 0), csv_infos[0])
+
+#         # Build full destination path (preserve subfolders)
+#         dest_path = os.path.join(extract_to_dir, *target.filename.split("/"))
+#         os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+
+#         # Extract by streaming to avoid oddities
+#         with zf.open(target, "r") as src, open(dest_path, "wb") as dst:
+#             shutil.copyfileobj(src, dst)
+
+#         # Double-check size on disk
+#         final_size = os.path.getsize(dest_path)
+#         print(f"✅ Extracted {target.filename} -> {dest_path} ({final_size} bytes)")
+#         if target.file_size != final_size:
+#             print("⚠️ Size mismatch: archive says "
+#                   f"{target.file_size}, written {final_size}.")
+#         return dest_path
+    
 #crypto = 
 # filename without path and with csv at the end
 # return data when volume != 0

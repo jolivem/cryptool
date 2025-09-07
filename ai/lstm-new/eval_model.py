@@ -10,21 +10,22 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 import utils
-import inputs
+import params
 
-CRYPTO = "SOLUSDC-1s-2025-07"
+#CRYPTO = "SOLUSDC-1s-2025-07"
+sav_path = "artifacts/" + params.CRYPTO
 
 def parse_args():
     p = argparse.ArgumentParser(description="Évaluation d'un modèle LSTM sauvegardé (graphe vérité vs prédiction)")
     #p.add_argument("--csv", default="data.csv", help="Chemin du CSV OHLCV utilisé à l'entraînement")
-    p.add_argument("--model", default="artifacts/crypto_lstm.keras", help="Chemin du modèle sauvegardé")
-    p.add_argument("--scaler", default="artifacts/scaler_stats.npz", help="Chemin du scaler sauvegardé (mu/sigma/feat_cols)")
+    p.add_argument("--model", default=sav_path + "/crypto_lstm.keras", help="Chemin du modèle sauvegardé")
+    p.add_argument("--scaler", default=sav_path + "/scaler_stats.npz", help="Chemin du scaler sauvegardé (mu/sigma/feat_cols)")
     #p.add_argument("--target-col", default="close", help="Colonne cible utilisée à l'entraînement")
     # p.add_argument("--use-returns", action="store_true", default=True, help="Si True, cible = log-return (comme dans le script d'entraînement par défaut)")
     # p.add_argument("--no-returns", dest="use-returns", action="store_false", help="Si False, cible = prix futur (shift)")
     #p.add_argument("--horizon", type=int, default=1, help="Horizon utilisé à l'entraînement (par défaut 1)")
     #p.add_argument("--test-split", type=float, default=0.15, help="Part de test utilisée à l'entraînement (par défaut 0.15)")
-    p.add_argument("--save", default="artifacts/eval_pred_vs_true.png", help="Chemin de sauvegarde du graphe")
+    p.add_argument("--save", default=sav_path +"/eval_pred_vs_true.png", help="Chemin de sauvegarde du graphe")
     return p.parse_args()
 
 
@@ -37,6 +38,7 @@ def main():
     # if not os.path.exists(args.csv):
     #     raise FileNotFoundError(f"CSV introuvable: {args.csv}")
 
+    
     # -- Charger modèle et scaler --
     model = tf.keras.models.load_model(args.model)
     inp_shape = model.input_shape  # (None, WINDOW, N_FEATURES)
@@ -58,7 +60,7 @@ def main():
 
     # -- Charger CSV & préparer features exactement comme à l'entraînement --
 
-    df = utils.load_data(inputs.CRYPTO)
+    df = utils.load_data(params.CRYPTO)
 
     (df, cols) = utils.prepare_data(df)
 
@@ -69,17 +71,17 @@ def main():
     #     df["oc_spread"] = (df["close"] - df["open"]).abs()
 
     # # Cible (même logique que l'entraînement)
-    # if inputs.USE_RETURN:
+    # if params.USE_RETURN:
     #     # log-return
-    #     df["target"] = np.log(df[inputs.TARGET_COL]).diff()
+    #     df["target"] = np.log(df[params.TARGET_COL]).diff()
     # else:
-    #     df["target"] = df[inputs.TARGET_COL].shift(-inputs.HORIZON)
+    #     df["target"] = df[params.TARGET_COL].shift(-params.HORIZON)
 
     # df = df.dropna().reset_index(drop=True)
 
     # -- Recréer le split temporel (test final) --
     N = len(df)
-    test_size = int(N * inputs.TEST_SPLIT)
+    test_size = int(N * params.TEST_SPLIT)
     test = df.iloc[N - test_size :].copy()
 
     # -- Préparer X_test / y_test avec les mêmes features et scaling sauvés --
@@ -90,7 +92,7 @@ def main():
     X_test = (X_test - mu) / sigma
 
     # -- Fenêtrage identique --
-    Xte_seq, yte = utils.make_windows(X_test, y_test, WINDOW, inputs.HORIZON)
+    Xte_seq, yte = utils.make_windows(X_test, y_test, params.WINDOW, params.HORIZON)
     if len(Xte_seq) == 0:
         raise ValueError("Pas assez d'échantillons pour créer des fenêtres sur le set de test. Réduisez WINDOW/HORIZON ou fournissez plus de données.")
 
@@ -100,14 +102,14 @@ def main():
     # -- Métriques simples --
     mae = float(np.mean(np.abs(yhat - yte)))
     mse = float(np.mean((yhat - yte)**2))
-    print(f"[Test] MAE: {mae:.6f} | MSE: {mse:.6f} | fenêtres: {len(yte)} | WINDOW={WINDOW} HORIZON={inputs.HORIZON}")
+    print(f"[Test] MAE: {mae:.6f} | MSE: {mse:.6f} | fenêtres: {len(yte)} | WINDOW={params.WINDOW} HORIZON={params.HORIZON}")
 
     # -- Graphe: vérité vs prédiction (série) --
     os.makedirs(os.path.dirname(args.save), exist_ok=True)
     plt.figure()
     plt.plot(yte, label="vérité")
     plt.plot(yhat, label="prédiction")
-    title_suffix = "(returns)" if inputs.USE_RETURNS else "(prix)"
+    title_suffix = "(returns)" if params.USE_RETURNS else "(prix)"
     plt.title(f"Évaluation test — vérité vs prédiction {title_suffix}")
     plt.xlabel("Index test")
     plt.ylabel("Cible")

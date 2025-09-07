@@ -1,2 +1,6 @@
 pandas
+numpy
 requests
+tensorflow
+torch
+matplotlib
