@@ -53,15 +53,15 @@ X_val = X_trainval[train_size:]
 y_val = y_trainval[train_size:]
 
 # compute mu and sigma for all feat_cols
-# mu = X_train.mean(axis=0, keepdims=True)
-# sigma = X_train.std(axis=0, keepdims=True) + 1e-8
-# X_train = (X_train - mu) / sigma
-# X_val   = (X_val   - mu) / sigma
-# X_test  = (X_test  - mu) / sigma
-# print("sigma shape:", sigma.shape, "dtype:", sigma.dtype)
-# # 1) Print all values without truncation
-# np.set_printoptions(precision=6, suppress=True, linewidth=140, threshold=np.inf)
-# print("sigma raw:", sigma)
+mu = X_train.mean(axis=0, keepdims=True)
+sigma = X_train.std(axis=0, keepdims=True) + 1e-8
+X_train = (X_train - mu) / sigma
+X_val   = (X_val   - mu) / sigma
+X_test  = (X_test  - mu) / sigma
+print("sigma shape:", sigma.shape, "dtype:", sigma.dtype)
+# 1) Print all values without truncation
+np.set_printoptions(precision=6, suppress=True, linewidth=140, threshold=np.inf)
+print("sigma raw:", sigma)
 
 # # 2) Pretty table with feature names
 # assert len(feat_cols) == sigma.shape[1], "feat_cols mismatch"

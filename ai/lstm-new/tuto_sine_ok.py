@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Minimal LSTM on a sine wave — train, evaluate, and plot
 
-import os, shutil
+import os
 import numpy as np
 import tensorflow as tf
 
@@ -9,8 +9,6 @@ import tensorflow as tf
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-
-import params, utils
 
 # ----------------------------
 # 1) Generate a sine time series
@@ -24,25 +22,13 @@ HORIZON      = 1             # predict next step
 TRAIN_SPLIT  = 0.7
 VAL_SPLIT    = 0.15          # test is the rest (0.15)
 
-# tf.keras.utils.set_random_seed(SEED)
-# rng = np.random.default_rng(SEED)
+tf.keras.utils.set_random_seed(SEED)
+rng = np.random.default_rng(SEED)
 
-# t = np.arange(SERIES_LEN, dtype=np.float32)
-# series = np.sin(2*np.pi * t / PERIOD).astype(np.float32) + rng.normal(0, NOISE_STD, SERIES_LEN).astype(np.float32) + 100.0
+t = np.arange(SERIES_LEN, dtype=np.float32)
+series = np.sin(2*np.pi * t / PERIOD).astype(np.float32) + rng.normal(0, NOISE_STD, SERIES_LEN).astype(np.float32)
 
-
-
-# -------------------------
-# 1) Charger et nettoyer
-# -------------------------
-
-df = utils.load_data(params.CRYPTO)
-
-(df, feat_cols) = utils.prepare_data(df)
-
-series = df["close"].to_numpy(dtype=float)
-SERIES_LEN   = len(df)
-print(series[:10])
+#print(series[:10])
 
 # ----------------------------
 # 2) Train/val/test splits (by time)
