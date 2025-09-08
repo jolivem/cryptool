@@ -40,8 +40,8 @@ def load_data(cryptos):
 
 def prepare_data(df):
     # Features de base
-    #feat_cols = ["open","high","low","close","volume"]
-    feat_cols = ["close"]
+    feat_cols = ["open","high","low","close","volume"]
+    #feat_cols = ["close"]
 
     # (Optionnel) Ajouter indicateurs simples
     # df["hl_spread"] = df["high"] - df["low"]
