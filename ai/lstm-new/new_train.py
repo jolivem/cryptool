@@ -31,18 +31,20 @@ VAL_SPLIT    = 0.15          # test is the rest (0.15)
 # series = np.sin(2*np.pi * t / PERIOD).astype(np.float32) + rng.normal(0, NOISE_STD, SERIES_LEN).astype(np.float32) + 100.0
 
 
+sav_path = "artifacts/" + params.CRYPTO
+if os.path.exists(sav_path):
+    shutil.rmtree(sav_path)
 
 # -------------------------
 # 1) Charger et nettoyer
 # -------------------------
 
 df = utils.load_data(params.CRYPTO)
-
 (df, feat_cols) = utils.prepare_data(df)
 
 series = df["close"].to_numpy(dtype=float)
 SERIES_LEN   = len(df)
-print(series[:10])
+# print(series[:10])
 
 # ----------------------------
 # 2) Train/val/test splits (by time)
@@ -95,6 +97,16 @@ model.compile(optimizer=tf.keras.optimizers.Adam(1e-3),
 cb = tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=5, restore_best_weights=True)
 history = model.fit(Xtr, ytr, validation_data=(Xva, yva), epochs=40, batch_size=64, callbacks=[cb], verbose=1)
 
+
+# -------------------------
+# 9) Sauvegarde du modèle
+# -------------------------
+os.makedirs(sav_path, exist_ok=True)
+model.save(sav_path + "/crypto_lstm.keras")
+#np.savez(sav_path + "/scaler_stats.npz", feat_cols=np.array(feat_cols))
+print("Modèle et scaler sauvegardés dans ./" + sav_path)
+
+
 # ----------------------------
 # 5) Evaluate on test windows
 # ----------------------------
@@ -109,7 +121,6 @@ ytrue  = yte    * std + mu
 # ----------------------------
 # 6) Plot: true vs predicted (test)
 # ----------------------------
-os.makedirs("artifacts", exist_ok=True)
 
 plt.figure()
 plt.plot(ytrue, label="true (test)")
@@ -117,8 +128,8 @@ plt.plot(yhat,  label="pred (test)")
 plt.title("Sine — next-step prediction on test windows")
 plt.xlabel("test window index"); plt.ylabel("value")
 plt.legend(); plt.tight_layout()
-plt.savefig("artifacts/sine_test_true_vs_pred.png", dpi=130)
-print("Saved:", "artifacts/sine_test_true_vs_pred.png")
+plt.savefig(sav_path +"/sine_test_true_vs_pred.png", dpi=130)
+print("Saved:", sav_path +"/sine_test_true_vs_pred.png")
 
 # ----------------------------
 # 7) Simple multi-step forecast demo
@@ -144,5 +155,5 @@ plt.plot(np.arange(len(context)-1, len(context)-1 + steps_ahead),
 plt.title("Sine — multi-step forecast from last window")
 plt.xlabel("time"); plt.ylabel("value")
 plt.legend(); plt.tight_layout()
-plt.savefig("artifacts/sine_multistep_forecast.png", dpi=130)
-print("Saved:", "artifacts/sine_multistep_forecast.png")
+plt.savefig(sav_path +"/sine_multistep_forecast.png", dpi=130)
+print("Saved:", sav_path +"/sine_multistep_forecast.png")

@@ -74,12 +74,12 @@ print("sigma raw:", sigma)
 # -------------------------
 # 4) Fenêtrage en séquences
 # -------------------------
-def make_windows(X, y, window, params.HORIZON):
+def make_windows(X, y, window, horizon):
     Xs, ys = [], []
-    # On prédit y[t + params.HORIZON - 1] à partir de X[t-window+1 : t+1]
-    for t in range(window - 1, len(X) - params.HORIZON + 1):
+    # On prédit y[t + horizon - 1] à partir de X[t-window+1 : t+1]
+    for t in range(window - 1, len(X) - horizon + 1):
         Xs.append(X[t - window + 1 : t + 1])
-        ys.append(y[t + params.HORIZON - 1])
+        ys.append(y[t + horizon - 1])
     return np.array(Xs), np.array(ys)
 
 Xtr_seq, ytr = make_windows(X_train, y_train, params.WINDOW, params.HORIZON)
