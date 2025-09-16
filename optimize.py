@@ -1,6 +1,6 @@
 import pandas as pd
 import random
-import simulate
+import old_simulate
 
 # Chargement du CSV sans en-tête
 columns = [
@@ -46,7 +46,7 @@ for _ in range(100):  # 1000 essais
     sell_gain_pct = random.uniform(0.01, 0.02)
     sell_pullback_pct = random.uniform(0.002, 0.008)
     print(f"\nSimulate with buy: -{100.0*buy_drop_pct:.3f}%, {100.0*buy_pullback_pct:.3f}% ; sell: +{100.0*sell_gain_pct:.3f}%, {100.0*sell_pullback_pct:.3f}%")
-    profit = simulate.simulate(data, usdc_per_order, buy_drop_pct, buy_pullback_pct, sell_gain_pct, sell_pullback_pct, False)
+    profit = old_simulate.simulate(data, usdc_per_order, buy_drop_pct, buy_pullback_pct, sell_gain_pct, sell_pullback_pct, False)
     print(f"Profit total simulé : {profit:.2f} USDC")
 
     if profit > best_profit:

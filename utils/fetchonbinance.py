@@ -130,40 +130,6 @@ def unzip_csv(zip_path, extract_to_dir):
     print("❌ No CSV file found in the ZIP.")
     return None
 
-# def unzip_first_nonempty_csv(zip_path, extract_to_dir):
-#     os.makedirs(extract_to_dir, exist_ok=True)
-#     with zipfile.ZipFile(zip_path, "r") as zf:
-#         # List CSV candidates with info
-#         csv_infos = [i for i in zf.infolist() 
-#                      if i.filename.lower().endswith(".csv") and not i.is_dir()]
-
-#         if not csv_infos:
-#             print("❌ No CSV files found in the ZIP.")
-#             return None
-
-#         # Show what we found
-#         for info in csv_infos:
-#             print(f"Found: {info.filename} | size={info.file_size} bytes | "
-#                   f"compressed={info.compress_size} bytes")
-
-#         # Pick the first NON-empty CSV
-#         target = next((i for i in csv_infos if i.file_size > 0), csv_infos[0])
-
-#         # Build full destination path (preserve subfolders)
-#         dest_path = os.path.join(extract_to_dir, *target.filename.split("/"))
-#         os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-
-#         # Extract by streaming to avoid oddities
-#         with zf.open(target, "r") as src, open(dest_path, "wb") as dst:
-#             shutil.copyfileobj(src, dst)
-
-#         # Double-check size on disk
-#         final_size = os.path.getsize(dest_path)
-#         print(f"✅ Extracted {target.filename} -> {dest_path} ({final_size} bytes)")
-#         if target.file_size != final_size:
-#             print("⚠️ Size mismatch: archive says "
-#                   f"{target.file_size}, written {final_size}.")
-#         return dest_path
     
 #crypto = 
 # filename without path and with csv at the end
@@ -190,7 +156,7 @@ def load_crypto_month(crypto_filename):
     #crypto = "ARBUSDC-1s-2025-06.csv"
     kline_file = os.path.join(datas_folder,crypto_filename)
     data = pd.read_csv(kline_file, header=None, names=columns)
-    data = data[data["volume"] != 0]
+    #data = data[data["volume"] != 0]
     data['timestamp'] = pd.to_datetime(data['timespan'], unit='us')
     #data['price'] = data['close']
 
@@ -218,76 +184,3 @@ def load_crypto_all_column(crypto_filename):
 
     return data
 
-# Liste prédéfinie
-# months = ["2025-07"]
-
-# # Boucle sur chaque mois
-# for ym in months:
-#     download_binance_crypto(
-#         symbol="FLOKIUSDC",
-#         interval="1s",
-#         year_month=ym
-#     )
-
-# # Example usage
-# download_binance_crypto(
-#     symbol="SOLUSDC",
-#     interval="1s",
-#     year_month="2025-07"
-# )
-
-# download_binance_file(
-#     symbol="SOLUSDC",
-#     interval="1s",
-#     year_month="2025-04",
-#     dest_folder=r"C:\\Users\\joliv\\Documents\\binance-data"
-# )
-# download_binance_file(
-#     symbol="SOLUSDC",
-#     interval="1s",
-#     year_month="2025-03",
-#     dest_folder=r"C:\\Users\\joliv\\Documents\\binance-data"
-# )
-# download_binance_file(
-#     symbol="ETHUSDC",
-#     interval="1h",
-#     year_month="2025-06",
-#     dest_folder=r"C:\\Users\\joliv\\Documents\\binance-data"
-# )
-# download_binance_file(
-#     symbol="BTCUSDC",
-#     interval="1h",
-#     year_month="2025-06",
-#     dest_folder=r"C:\\Users\\joliv\\Documents\\binance-data"
-# )
-# download_binance_file(
-#     symbol="SOLUSDC",
-#     interval="1h",
-#     year_month="2025-06",
-#     dest_folder=r"C:\\Users\\joliv\\Documents\\binance-data"
-# )
-# download_binance_file(
-#     symbol="SOLUSDC",
-#     interval="1s",
-#     year_month="2025-06",
-#     dest_folder=r"C:\\Users\\joliv\\Documents\\binance-data"
-# )
-# download_binance_file(
-#     symbol="ETHUSDC",
-#     interval="1s",
-#     year_month="2025-06",
-#     dest_folder=r"C:\\Users\\joliv\\Documents\\binance-data"
-# )
-
-# download_binance_file(
-#     symbol=crypto,
-#     interval="1s",
-#     year_month="2025-05",
-#     dest_folder=r"C:\\Users\\joliv\\Documents\\binance-data"
-# )
-# download_binance_file(
-#     symbol=crypto,
-#     interval="1s",
-#     year_month="2025-04",
-#     dest_folder=r"C:\\Users\\joliv\\Documents\\binance-data"
-# )

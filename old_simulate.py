@@ -1,6 +1,6 @@
 import pandas as pd
 
-def simulate(df, usdc_per_order, buy_drop_pct, buy_pullback_pct, sell_gain_pct, sell_pullback_pct, do_log):
+def old_simulate(df, usdc_per_order, buy_drop_pct, buy_pullback_pct, sell_gain_pct, sell_pullback_pct, do_log):
 
     fee_pct = 0.001
     positions = []

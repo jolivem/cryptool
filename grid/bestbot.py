@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import random
-import simulate
+import old_simulate
 import csv
 import sys
 sys.path.append("../utils")
@@ -42,14 +42,14 @@ def find_best_bot_with_params(nb_loop, historic, params_list):
         print(f"Try {tries}/{nb_loop}: -{100.0*buy_drop_pct:.3f}%, {100.0*buy_pullback_pct:.3f}% ; sell: +{100.0*sell_gain_pct:.3f}%, {100.0*sell_pullback_pct:.3f}%")
 
         # Appel de la simulation avec retour de la dernière position
-        profit, last_pos = simulate.simulate(
+        profit, last_pos = old_simulate.simulate(
             data,
             usdc_per_order,
             buy_drop_pct,
             buy_pullback_pct,
             sell_gain_pct,
             sell_pullback_pct,
-            False
+            True
         )
 
         print(f"--> {profit:.2f} USDC, last_pos : {last_pos}")
@@ -77,6 +77,9 @@ def find_best_bot_with_params(nb_loop, historic, params_list):
     save_results(fetchonbinance.result_folder + "/bestbot.csv", crypto, date_part, nb_loop, top_results)
 
 
+##
+##
+##
 def find_best_bot_with_loop(nb_loop, historic):
 
     try:
@@ -108,9 +111,9 @@ def find_best_bot_with_loop(nb_loop, historic):
 
         tries = tries + 1
         print(f"Try {tries}/{nb_loop}: -{100.0*buy_drop_pct:.3f}%, {100.0*buy_pullback_pct:.3f}% ; sell: +{100.0*sell_gain_pct:.3f}%, {100.0*sell_pullback_pct:.3f}%")
-
+        
         # Appel de la simulation avec retour de la dernière position
-        profit, last_pos = simulate.simulate(
+        profit, last_pos = old_simulate.simulate(
             data,
             usdc_per_order,
             buy_drop_pct,
@@ -144,6 +147,10 @@ def find_best_bot_with_loop(nb_loop, historic):
 
     save_results(fetchonbinance.result_folder + "/bestbot.csv", crypto, date_part, nb_loop, top_results)
 
+
+
+
+
 def find_best_bot_random(nb_loop, crypto_filename):
 
     data = load_crypto_month(crypto_filename)
@@ -173,7 +180,7 @@ def find_best_bot_random(nb_loop, crypto_filename):
         print(f"Try {tries}/{nb_loop}: -{100.0*buy_drop_pct:.3f}%, {100.0*buy_pullback_pct:.3f}% ; sell: +{100.0*sell_gain_pct:.3f}%, {100.0*sell_pullback_pct:.3f}%")
 
         # Appel de la simulation avec retour de la dernière position
-        profit, last_pos = simulate.simulate(
+        profit, last_pos = old_simulate.simulate(
             data,
             usdc_per_order,
             buy_drop_pct,
