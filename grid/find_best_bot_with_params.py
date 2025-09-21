@@ -23,4 +23,4 @@ params_list = [
 
 # Boucle sur les fichiers
 for crytpo in crytpos:
-    bestbot.find_best_bot_with_params(-111, crytpo, params_list)
+    bestbot.find_best_bot_with_params(-111, crytpo, params_list, delete=True)

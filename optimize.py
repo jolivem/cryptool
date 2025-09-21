@@ -1,6 +1,6 @@
 import pandas as pd
 import random
-import old_simulate
+import simulate
 
 # Chargement du CSV sans en-tête
 columns = [

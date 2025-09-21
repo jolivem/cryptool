@@ -1,12 +1,12 @@
 import pandas as pd
-import old_simulate
+import simulate
 import sys
 sys.path.append("../utils")
 import fetchonbinance
 #crypto_filename = "INJUSDC-1s-2025-08.csv"
 
 
-CRYPTO = "FLOKIUSDC-1s-2025-07"
+CRYPTO = "SOLUSDC-1s-2025-09-14"
 
 try:
     fetchonbinance.download_and_join_binance_file(CRYPTO)
@@ -24,12 +24,12 @@ except Exception  as e:
 usdc_per_order = 20
 
 buy_drop_pct = 0.01
-buy_pullback_pct = 0.005
-sell_gain_pct = 0.015
-sell_pullback_pct = 0.005
+buy_pullback_pct = 0.0
+sell_gain_pct = 0.01
+sell_pullback_pct = 0.0
 
 # Appel de la simulation avec retour de la dernière position
-profit, last_pos = old_simulate.simulate(
+profit, last_pos = simulate.simulate(
     data,
     usdc_per_order,
     buy_drop_pct,

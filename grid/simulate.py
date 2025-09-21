@@ -15,6 +15,7 @@ def simulate(df, usdc_per_order, buy_drop_pct, buy_pullback_pct, sell_gain_pct, 
     highest_price = None
     top_price = None 
 
+    max_cov = 0
     # Boucle principale
     for i in range(1, len(df)):
         #volume = df['volume'].iloc[i]
@@ -27,7 +28,6 @@ def simulate(df, usdc_per_order, buy_drop_pct, buy_pullback_pct, sell_gain_pct, 
 
         # === Logique d'achat (grille) ===
         should_buy = False
-        max_cov = 0
 
         if not positions:
             # Pas de position : premier achat
@@ -56,11 +56,11 @@ def simulate(df, usdc_per_order, buy_drop_pct, buy_pullback_pct, sell_gain_pct, 
             
             if drop_from_lowest >= buy_drop_pct:
                 
-                print(f"AA [{time}] lowest_entry_price:{lowest_entry_price} drop_from_lowest{drop_from_lowest:.4f}")
+                #print(f"AA [{time}] lowest_entry_price:{lowest_entry_price} drop_from_lowest{drop_from_lowest:.4f}")
                 # Optionnel : détecter un petit rebond après le point bas
                 previous_price = df['close'].iloc[i - 1]
                 pullback_price = lowest_price * (1 + buy_pullback_pct)
-                print(f"BB [{time}] price {price} lowest_price {lowest_price} pullback_price {pullback_price:.6f}")
+                #print(f"BB [{time}] price {price} lowest_price {lowest_price} pullback_price {pullback_price:.6f}")
                 if price < previous_price and price >= pullback_price:
 
                     should_buy = True
